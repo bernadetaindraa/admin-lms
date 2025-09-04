@@ -1,7 +1,8 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
-// Import Poppins dengan beberapa weight
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -19,7 +20,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${poppins.variable} font-sans antialiased bg-gray-50 text-gray-800`}
       >
-        {children}
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );

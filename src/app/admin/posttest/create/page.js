@@ -16,18 +16,18 @@ export default function PostTestPage() {
     const [search, setSearch] = useState("");
 
     const [isCreateMode, setIsCreateMode] = useState(false);
-    const [judul, setJudul] = useState("");
-    const [deskripsi, setDeskripsi] = useState("");
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [questions, setQuestions] = useState([
         { id: 1, text: "", image: null, options: [{ text: "", image: null }, { text: "", image: null }] },
     ]);
 
     const handleAddPostTest = () => {
-        if (!judul) return;
+        if (!title) return;
         const newPostTest = {
             id: Date.now(),
-            judul,
-            deskripsi,
+            title,
+            description,
             questions,
         };
         setPostTests([...postTests, newPostTest]);
@@ -36,8 +36,8 @@ export default function PostTestPage() {
     };
 
     const resetForm = () => {
-        setJudul("");
-        setDeskripsi("");
+        setTitle("");
+        setDescription("");
         setQuestions([
             { id: 1, text: "", image: null, options: [{ text: "", image: null }, { text: "", image: null }] },
         ]);
@@ -48,10 +48,10 @@ export default function PostTestPage() {
     };
 
     const filtered = postTests.filter((p) =>
-        p.judul.toLowerCase().includes(search.toLowerCase())
+        p.title.toLowerCase().includes(search.toLowerCase())
     );
 
-    // --- Pertanyaan ---
+    // --- Questions ---
     const handleQuestionChange = (id, value) => {
         setQuestions(
             questions.map((q) => (q.id === id ? { ...q, text: value } : q))
@@ -84,7 +84,7 @@ export default function PostTestPage() {
         ]);
     };
 
-    // --- Opsi ---
+    // --- Options ---
     const handleOptionChange = (qid, idx, value) => {
         setQuestions(
             questions.map((q) =>
@@ -126,180 +126,168 @@ export default function PostTestPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-6 text-gray-800">
+        <div className="min-h-screen bg-white p-6 text-gray-800 text-sm">
             {!isCreateMode ? (
                 <>
-                    <h1 className="text-2xl font-bold mb-6">Kelola Post-test</h1>
+                    <h1 className="text-xl font-bold mb-6">Manage Post-tests</h1>
 
-                    {/* Tambah Post-test + Search */}
+                    {/* Add Post-test + Search */}
                     <div className="flex justify-between items-center mb-6">
                         <button
                             onClick={() => setIsCreateMode(true)}
-                            className="flex items-center gap-2 border-2 border-dashed border-gray-400 px-4 py-3 rounded-lg hover:bg-gray-50"
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#609966] text-white hover:bg-[#4e7a52] transition shadow-md text-sm"
                         >
-                            <Plus className="w-5 h-5" /> Tambah Post-test
+                            <Plus className="w-4 h-4" /> Add Post-test
                         </button>
 
-                        <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white shadow-sm">
+                        <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1.5 bg-white shadow-sm">
                             <Search className="w-4 h-4 text-gray-500" />
                             <input
                                 type="text"
-                                placeholder="Cari Post-test..."
+                                placeholder="Search Post-test..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="outline-none text-gray-800"
+                                className="outline-none text-gray-800 text-sm"
                             />
                         </div>
                     </div>
 
-                    {/* Daftar Post-test */}
+                    {/* Post-test List */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {filtered.map((p) => (
                             <div
                                 key={p.id}
-                                className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-between"
+                                className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-between hover:shadow-lg transition"
                             >
                                 <div>
-                                    <h2 className="font-semibold text-lg">{p.judul}</h2>
-                                    <p className="text-sm text-gray-500">{p.deskripsi}</p>
+                                    <h2 className="font-semibold text-base text-gray-800">{p.title}</h2>
+                                    <p className="text-xs text-gray-500 mt-1">{p.description}</p>
                                 </div>
-                                <div className="flex gap-2 mt-4">
-                                    <button className="p-2 rounded-lg hover:bg-gray-200">
-                                        <Edit className="w-5 h-5 text-black" />
+                                <div className="flex gap-2 mt-3">
+                                    <button className="p-1.5 rounded-lg hover:bg-gray-100">
+                                        <Edit className="w-4 h-4 text-gray-700" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(p.id)}
-                                        className="p-2 rounded-lg hover:bg-gray-200"
+                                        className="p-1.5 rounded-lg hover:bg-gray-100"
                                     >
-                                        <Trash2 className="w-5 h-5 text-black" />
+                                        <Trash2 className="w-4 h-4 text-red-600" />
                                     </button>
                                 </div>
                             </div>
                         ))}
                         {filtered.length === 0 && (
-                            <p className="text-gray-500">Belum ada Post-test.</p>
+                            <p className="text-gray-500 text-sm">No Post-tests yet.</p>
                         )}
                     </div>
                 </>
             ) : (
                 <>
-                    <h3 className="text-3xl font-bold mb-6 text-gray-800">
-                        Buat Post-test Baru
+                    <h3 className="text-2xl font-bold mb-6 text-gray-800">
+                        Create New Post-test
                     </h3>
 
-                    <div className="bg-white p-8 rounded-2xl shadow-lg mb-6 border border-green-100">
-                        {/* Judul & Deskripsi */}
+                    <div className="bg-white p-6 rounded-xl shadow-md mb-6">
+                        {/* Title & Description */}
                         <input
                             type="text"
-                            placeholder="Judul Post-test"
-                            value={judul}
-                            onChange={(e) => setJudul(e.target.value)}
-                            className="w-full border border-green-200 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
+                            placeholder="Post-test Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg p-2 mb-3 focus:outline-none focus:ring-2 focus:ring-[#609966] transition text-sm"
                         />
                         <textarea
-                            placeholder="Deskripsi Post-test"
-                            value={deskripsi}
-                            onChange={(e) => setDeskripsi(e.target.value)}
-                            className="w-full border border-green-200 rounded-lg p-3 mb-6 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-green-300 transition"
+                            placeholder="Post-test Description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg p-2 mb-5 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-[#609966] transition text-sm"
                         />
 
-                        {/* Pertanyaan */}
+                        {/* Questions */}
                         {questions.map((q, idx) => (
                             <div
                                 key={q.id}
-                                className="border border-green-200 rounded-xl p-5 mb-4 bg-green-50/50 relative"
+                                className="rounded-xl p-4 mb-4 bg-gray-50 shadow-sm"
                             >
-                                <div className="flex justify-between items-start">
-                                    <h3 className="font-semibold mb-3 text-green-700">
-                                        Pertanyaan {idx + 1}
+                                <div className="flex justify-between items-start mb-3">
+                                    <h3 className="font-medium text-[#609966]">
+                                        Question {idx + 1}
                                     </h3>
                                     <div className="flex gap-2">
                                         <button
-                                            onClick={() =>
-                                                document.getElementById(`qimg-${q.id}`).click()
-                                            }
-                                            className="p-2 hover:bg-green-100 rounded-lg"
+                                            onClick={() => document.getElementById(`qimg-${q.id}`).click()}
+                                            className="p-1.5 hover:bg-gray-100 rounded-lg"
                                         >
-                                            <ImageIcon className="w-5 h-5 text-green-700" />
+                                            <ImageIcon className="w-4 h-4 text-[#609966]" />
                                         </button>
                                         <button
                                             onClick={() => duplicateQuestion(q.id)}
-                                            className="p-2 hover:bg-green-100 rounded-lg"
+                                            className="p-1.5 hover:bg-gray-100 rounded-lg"
                                         >
-                                            <Copy className="w-5 h-5 text-green-700" />
+                                            <Copy className="w-4 h-4 text-[#609966]" />
                                         </button>
                                         <button
                                             onClick={() => deleteQuestion(q.id)}
-                                            className="p-2 hover:bg-green-100 rounded-lg"
+                                            className="p-1.5 hover:bg-gray-100 rounded-lg"
                                         >
-                                            <Trash2 className="w-5 h-5 text-red-600" />
+                                            <Trash2 className="w-4 h-4 text-red-600" />
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* Input teks pertanyaan */}
                                 <input
                                     type="text"
-                                    placeholder="Masukkan pertanyaan"
+                                    placeholder="Enter question"
                                     value={q.text}
                                     onChange={(e) => handleQuestionChange(q.id, e.target.value)}
-                                    className="w-full border border-green-200 rounded-lg p-3 mb-3 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
+                                    className="w-full border border-gray-200 rounded-lg p-2 mb-3 focus:outline-none focus:ring-2 focus:ring-[#609966] transition text-sm"
                                 />
 
-                                {/* Hidden input file */}
                                 <input
                                     type="file"
                                     id={`qimg-${q.id}`}
                                     accept="image/*"
                                     className="hidden"
-                                    onChange={(e) =>
-                                        handleQuestionImageUpload(q.id, e.target.files[0])
-                                    }
+                                    onChange={(e) => handleQuestionImageUpload(q.id, e.target.files[0])}
                                 />
                                 {q.image && (
                                     <img
                                         src={URL.createObjectURL(q.image)}
                                         alt="Preview"
-                                        className="w-32 h-32 object-cover rounded-lg mb-3 border"
+                                        className="w-28 h-28 object-cover rounded-lg mb-3 shadow"
                                     />
                                 )}
 
-                                {/* Opsi jawaban */}
+                                {/* Options */}
                                 {q.options.map((opt, i) => (
-                                    <div key={i} className="flex items-start gap-3 mb-3">
-                                        <input type="radio" disabled className="mt-3 text-green-500" />
+                                    <div key={i} className="flex items-start gap-2 mb-3">
+                                        <input type="radio" disabled className="mt-2 text-[#609966]" />
                                         <div className="flex-1">
                                             <input
                                                 type="text"
-                                                placeholder={`Pilihan ${i + 1}`}
+                                                placeholder={`Option ${i + 1}`}
                                                 value={opt.text}
-                                                onChange={(e) =>
-                                                    handleOptionChange(q.id, i, e.target.value)
-                                                }
-                                                className="w-full border border-green-200 rounded-lg p-3 mb-2 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
+                                                onChange={(e) => handleOptionChange(q.id, i, e.target.value)}
+                                                className="w-full border border-gray-200 rounded-lg p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-[#609966] transition text-sm"
                                             />
                                             <input
                                                 type="file"
                                                 accept="image/*"
                                                 className="hidden"
                                                 id={`optimg-${q.id}-${i}`}
-                                                onChange={(e) =>
-                                                    handleOptionImageUpload(q.id, i, e.target.files[0])
-                                                }
+                                                onChange={(e) => handleOptionImageUpload(q.id, i, e.target.files[0])}
                                             />
                                             <button
-                                                onClick={() =>
-                                                    document.getElementById(`optimg-${q.id}-${i}`).click()
-                                                }
-                                                className="text-xs text-green-600 hover:underline"
+                                                onClick={() => document.getElementById(`optimg-${q.id}-${i}`).click()}
+                                                className="text-xs text-[#609966] hover:underline"
                                             >
-                                                + Tambah gambar
+                                                + Add image
                                             </button>
                                             {opt.image && (
                                                 <img
                                                     src={URL.createObjectURL(opt.image)}
-                                                    alt="Preview opsi"
-                                                    className="w-24 h-24 object-cover rounded-lg mt-2 border"
+                                                    alt="Option preview"
+                                                    className="w-20 h-20 object-cover rounded-lg mt-2 shadow"
                                                 />
                                             )}
                                         </div>
@@ -308,32 +296,32 @@ export default function PostTestPage() {
 
                                 <button
                                     onClick={() => addOption(q.id)}
-                                    className="text-sm text-green-600 hover:underline mt-2"
+                                    className="text-xs text-[#609966] hover:underline mt-1"
                                 >
-                                    + Tambah pilihan
+                                    + Add option
                                 </button>
                             </div>
                         ))}
 
-                        {/* Tambah Pertanyaan */}
+                        {/* Add Question */}
                         <button
                             onClick={addQuestion}
-                            className="w-full border-2 border-dashed border-green-300 rounded-xl py-3 text-green-600 hover:bg-green-50 transition mb-6"
+                            className="w-full border-2 border-dashed border-[#9DC08B] rounded-lg py-2 text-[#609966] hover:bg-green-50 transition mb-5 text-sm"
                         >
-                            + Tambah Pertanyaan
+                            + Add Question
                         </button>
 
-                        {/* Action */}
+                        {/* Actions */}
                         <div className="flex justify-between">
                             <button
                                 onClick={() => setIsCreateMode(false)}
-                                className="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 transition"
+                                className="bg-gray-200 text-gray-700 px-4 py-1.5 rounded-lg hover:bg-gray-300 transition text-sm"
                             >
-                                Batal
+                                Cancel
                             </button>
                             <button
                                 onClick={handleAddPostTest}
-                                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition shadow-md"
+                                className="bg-[#609966] text-white px-5 py-1.5 rounded-lg hover:bg-[#4e7a52] transition shadow-md text-sm"
                             >
                                 Publish
                             </button>
@@ -345,9 +333,9 @@ export default function PostTestPage() {
             {/* Back */}
             <button
                 onClick={() => (window.location.href = "/admin")}
-                className="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-blue-700"
+                className="fixed bottom-6 right-6 bg-[#609966] text-white px-4 py-2 rounded-full shadow-md hover:bg-[#4e7a52] transition text-sm"
             >
-                <ArrowLeft className="inline-block w-5 h-5 mr-2" />
+                <ArrowLeft className="inline-block w-4 h-4 mr-1" />
                 Back
             </button>
         </div>

@@ -34,34 +34,33 @@ export default function ChatPage() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-50 font-[Poppins] text-gray-900">
-            {/* Sidebar Bab */}
-            <div className="w-80 bg-white shadow-sm flex flex-col transition-all duration-300">
-                {/* Header sidebar */}
-                <div className="p-6 font-semibold text-xl bg-[#9DC08B] text-white flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5" /> Messages
+        <div className="flex h-screen bg-gray-50 font-[Poppins] text-gray-800 text-sm">
+            {/* Sidebar */}
+            <div className="w-72 bg-white shadow-md flex flex-col">
+                {/* Header */}
+                <div className="p-4 flex items-center justify-between border-b">
+                    <div className="flex items-center gap-2 font-semibold text-sm">
+                        <MessageSquare className="w-4 h-4 text-[#9DC08B]" /> Messages
                     </div>
-                    <Link href="/admin" className="hover:opacity-80">
-                        <ArrowLeft className="w-5 h-5" />
+                    <Link href="/admin" className="hover:opacity-70">
+                        <ArrowLeft className="w-4 h-4 text-gray-600" />
                     </Link>
                 </div>
 
-                {/* Search box */}
-                <div className="p-3 border-b">
+                {/* Search */}
+                <div className="p-3">
                     <input
                         type="text"
-                        placeholder="Search messages..."
+                        placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full border rounded-md px-3 py-2 text-sm bg-gray-50 focus:ring-2 focus:ring-[#9DC08B] outline-none"
+                        className="w-full rounded-lg px-3 py-2 text-xs bg-gray-100 focus:ring-2 focus:ring-[#9DC08B] outline-none"
                     />
                 </div>
 
-                {/* List Bab */}
+                {/* Chapters */}
                 <div className="flex-1 overflow-y-auto">
                     {Object.keys(chatData).map((bab, idx) => {
-                        // filter berdasarkan search
                         const lastMsg = chatData[bab][chatData[bab].length - 1]?.text || "";
                         if (
                             search &&
@@ -75,17 +74,17 @@ export default function ChatPage() {
                             <div
                                 key={idx}
                                 onClick={() => setSelectedBab(bab)}
-                                className={`p-4 cursor-pointer flex items-center gap-3 hover:bg-gray-100 transition-colors duration-200 ${selectedBab === bab ? "bg-[#9DC08B]/10 font-medium" : ""
+                                className={`p-3 cursor-pointer flex items-center gap-3 hover:bg-gray-100 transition ${selectedBab === bab ? "bg-gray-100 font-medium" : ""
                                     }`}
                             >
-                                <BookOpen className="w-5 h-5 text-[#9DC08B]" />
-                                <div className="flex-1">
-                                    <div className="text-base">{bab}</div>
-                                    <div className="text-xs text-gray-600 truncate mt-1">
+                                <BookOpen className="w-4 h-4 text-[#9DC08B]" />
+                                <div className="flex-1 min-w-0">
+                                    <div className="truncate text-sm">{bab}</div>
+                                    <div className="text-xs text-gray-500 truncate">
                                         {lastMsg || "No messages yet"}
                                     </div>
                                 </div>
-                                <ArrowRight className="w-4 h-4 text-gray-400" />
+                                <ArrowRight className="w-3 h-3 text-gray-400" />
                             </div>
                         );
                     })}
@@ -97,66 +96,63 @@ export default function ChatPage() {
                 {selectedBab ? (
                     <>
                         {/* Header */}
-                        <div className="flex items-center justify-between p-6 bg-white shadow-sm">
-                            <h2 className="font-semibold text-xl flex items-center gap-2">
-                                <BookOpen className="w-5 h-5 text-[#9DC08B]" /> {selectedBab}
+                        <div className="flex items-center justify-between p-4 bg-white shadow-sm">
+                            <h2 className="font-medium text-sm flex items-center gap-2">
+                                <BookOpen className="w-4 h-4 text-[#9DC08B]" /> {selectedBab}
                             </h2>
                         </div>
 
-                        {/* Chat Messages */}
-                        <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50">
+                        {/* Messages */}
+                        <div className="flex-1 p-6 overflow-y-auto space-y-3 bg-gray-50 text-sm">
                             {chatData[selectedBab].map((msg) => (
                                 <div
                                     key={msg.id}
                                     className={`flex ${msg.sender === "you" ? "justify-end" : "justify-start"}`}
                                 >
-                                    <div
-                                        className={`flex items-end gap-2 max-w-sm ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                                            }`}
-                                    >
+                                    <div className={`flex items-end gap-2 max-w-xs ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"}`}>
                                         <User
-                                            className={`w-6 h-6 ${msg.sender === "you"
+                                            className={`w-5 h-5 ${msg.sender === "you"
                                                     ? "text-[#9DC08B]"
                                                     : msg.sender === "admin"
-                                                        ? "text-red-500"
-                                                        : "text-gray-500"
+                                                        ? "text-red-400"
+                                                        : "text-gray-400"
                                                 }`}
                                         />
                                         <div
-                                            className={`px-4 py-2 rounded-lg shadow-sm ${msg.sender === "you"
+                                            className={`px-3 py-2 rounded-lg text-xs shadow-sm ${msg.sender === "you"
                                                     ? "bg-[#9DC08B] text-white"
                                                     : msg.sender === "admin"
-                                                        ? "bg-[#9DC08B]/20 text-gray-900"
-                                                        : "bg-gray-200 text-gray-900"
+                                                        ? "bg-[#9DC08B]/20 text-gray-800"
+                                                        : "bg-gray-200 text-gray-800"
                                                 }`}
                                         >
-                                            <div className="text-sm">{msg.text}</div>
-                                            <div className="text-xs text-gray-600 mt-1 text-right">{msg.time}</div>
+                                            <div>{msg.text}</div>
+                                            <div className="text-[10px] text-gray-500 mt-1 text-right">{msg.time}</div>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Input Chat */}
-                        <div className="p-4 bg-white shadow-sm flex items-center">
+                        {/* Input */}
+                        <div className="p-3 bg-white flex items-center gap-2 shadow-sm">
                             <input
                                 type="text"
                                 placeholder="Type a message..."
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                className="flex-1 border-none rounded-md px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-[#9DC08B] outline-none transition-all duration-200"
+                                className="flex-1 rounded-lg px-3 py-2 text-sm bg-gray-100 focus:ring-2 focus:ring-[#9DC08B] outline-none"
                             />
                             <button
                                 onClick={handleSend}
-                                className="ml-2 bg-[#9DC08B] text-white p-2 rounded-md hover:bg-[#8AB576] transition-colors duration-200"
+                                className="bg-[#9DC08B] text-white p-2 rounded-lg hover:bg-[#8AB576] transition"
                             >
-                                <Send className="w-5 h-5" />
+                                <Send className="w-4 h-4" />
                             </button>
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-600 text-lg">
+                    <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">
                         Select a chapter to start chatting
                     </div>
                 )}
