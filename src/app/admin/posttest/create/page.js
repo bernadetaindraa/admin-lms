@@ -19,7 +19,13 @@ export default function PostTestPage() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [questions, setQuestions] = useState([
-        { id: 1, text: "", image: null, options: [{ text: "", image: null }, { text: "", image: null }] },
+        {
+            id: 1,
+            text: "",
+            type: "multipleChoice", // default
+            image: null,
+            options: [{ text: "", image: null }, { text: "", image: null }],
+        },
     ]);
 
     const handleAddPostTest = () => {
@@ -39,7 +45,13 @@ export default function PostTestPage() {
         setTitle("");
         setDescription("");
         setQuestions([
-            { id: 1, text: "", image: null, options: [{ text: "", image: null }, { text: "", image: null }] },
+            {
+                id: 1,
+                text: "",
+                type: "multipleChoice",
+                image: null,
+                options: [{ text: "", image: null }, { text: "", image: null }],
+            },
         ]);
     };
 
@@ -52,9 +64,11 @@ export default function PostTestPage() {
     );
 
     // --- Questions ---
-    const handleQuestionChange = (id, value) => {
+    const handleQuestionChange = (id, key, value) => {
         setQuestions(
-            questions.map((q) => (q.id === id ? { ...q, text: value } : q))
+            questions.map((q) =>
+                q.id === id ? { ...q, [key]: value } : q
+            )
         );
     };
 
@@ -80,7 +94,13 @@ export default function PostTestPage() {
     const addQuestion = () => {
         setQuestions([
             ...questions,
-            { id: Date.now(), text: "", image: null, options: [{ text: "", image: null }, { text: "", image: null }] },
+            {
+                id: Date.now(),
+                text: "",
+                type: "multipleChoice",
+                image: null,
+                options: [{ text: "", image: null }, { text: "", image: null }],
+            },
         ]);
     };
 
@@ -205,10 +225,7 @@ export default function PostTestPage() {
 
                         {/* Questions */}
                         {questions.map((q, idx) => (
-                            <div
-                                key={q.id}
-                                className="rounded-xl p-4 mb-4 bg-gray-50 shadow-sm"
-                            >
+                            <div key={q.id} className="rounded-xl p-4 mb-4 bg-gray-50 shadow-sm">
                                 <div className="flex justify-between items-start mb-3">
                                     <h3 className="font-medium text-[#609966]">
                                         Question {idx + 1}
@@ -239,10 +256,11 @@ export default function PostTestPage() {
                                     type="text"
                                     placeholder="Enter question"
                                     value={q.text}
-                                    onChange={(e) => handleQuestionChange(q.id, e.target.value)}
+                                    onChange={(e) => handleQuestionChange(q.id, "text", e.target.value)}
                                     className="w-full border border-gray-200 rounded-lg p-2 mb-3 focus:outline-none focus:ring-2 focus:ring-[#609966] transition text-sm"
                                 />
 
+                                {/* Upload gambar pertanyaan */}
                                 <input
                                     type="file"
                                     id={`qimg-${q.id}`}
@@ -258,48 +276,86 @@ export default function PostTestPage() {
                                     />
                                 )}
 
-                                {/* Options */}
-                                {q.options.map((opt, i) => (
-                                    <div key={i} className="flex items-start gap-2 mb-3">
-                                        <input type="radio" disabled className="mt-2 text-[#609966]" />
-                                        <div className="flex-1">
-                                            <input
-                                                type="text"
-                                                placeholder={`Option ${i + 1}`}
-                                                value={opt.text}
-                                                onChange={(e) => handleOptionChange(q.id, i, e.target.value)}
-                                                className="w-full border border-gray-200 rounded-lg p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-[#609966] transition text-sm"
-                                            />
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                className="hidden"
-                                                id={`optimg-${q.id}-${i}`}
-                                                onChange={(e) => handleOptionImageUpload(q.id, i, e.target.files[0])}
-                                            />
-                                            <button
-                                                onClick={() => document.getElementById(`optimg-${q.id}-${i}`).click()}
-                                                className="text-xs text-[#609966] hover:underline"
-                                            >
-                                                + Add image
-                                            </button>
-                                            {opt.image && (
-                                                <img
-                                                    src={URL.createObjectURL(opt.image)}
-                                                    alt="Option preview"
-                                                    className="w-20 h-20 object-cover rounded-lg mt-2 shadow"
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-
-                                <button
-                                    onClick={() => addOption(q.id)}
-                                    className="text-xs text-[#609966] hover:underline mt-1"
+                                {/* Select Type */}
+                                <select
+                                    value={q.type}
+                                    onChange={(e) => handleQuestionChange(q.id, "type", e.target.value)}
+                                    className="border border-gray-200 rounded-lg p-2 mb-3 text-sm"
                                 >
-                                    + Add option
-                                </button>
+                                    <option value="multipleChoice">Multiple Choice</option>
+                                    <option value="shortText">Short Answer</option>
+                                    <option value="longText">Paragraph</option>
+                                </select>
+
+                                {/* Render sesuai tipe */}
+                                {q.type === "multipleChoice" && (
+                                    <div>
+                                        {q.options.map((opt, i) => (
+                                            <div key={i} className="flex items-start gap-2 mb-3">
+                                                <input type="radio" disabled className="mt-2" />
+                                                <div className="flex-1">
+                                                    <input
+                                                        type="text"
+                                                        placeholder={`Option ${i + 1}`}
+                                                        value={opt.text}
+                                                        onChange={(e) =>
+                                                            handleOptionChange(q.id, i, e.target.value)
+                                                        }
+                                                        className="w-full border border-gray-200 rounded-lg p-2 mb-2 text-sm"
+                                                    />
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        id={`optimg-${q.id}-${i}`}
+                                                        onChange={(e) =>
+                                                            handleOptionImageUpload(q.id, i, e.target.files[0])
+                                                        }
+                                                    />
+                                                    <button
+                                                        onClick={() =>
+                                                            document.getElementById(`optimg-${q.id}-${i}`).click()
+                                                        }
+                                                        className="text-xs text-[#609966] hover:underline"
+                                                    >
+                                                        + Add image
+                                                    </button>
+                                                    {opt.image && (
+                                                        <img
+                                                            src={URL.createObjectURL(opt.image)}
+                                                            alt="Option preview"
+                                                            className="w-20 h-20 object-cover rounded-lg mt-2 shadow"
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        <button
+                                            onClick={() => addOption(q.id)}
+                                            className="text-xs text-[#609966] hover:underline mt-1"
+                                        >
+                                            + Add option
+                                        </button>
+                                    </div>
+                                )}
+
+                                {q.type === "shortText" && (
+                                    <input
+                                        type="text"
+                                        disabled
+                                        placeholder="Short answer text"
+                                        className="w-full border border-gray-200 rounded-lg p-2 text-sm bg-gray-100"
+                                    />
+                                )}
+
+                                {q.type === "longText" && (
+                                    <textarea
+                                        disabled
+                                        placeholder="Paragraph text"
+                                        className="w-full border border-gray-200 rounded-lg p-2 text-sm bg-gray-100 h-20"
+                                    />
+                                )}
                             </div>
                         ))}
 
